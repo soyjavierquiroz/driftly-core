@@ -1,0 +1,21 @@
+# Archivos de sistema / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# Vendor (por si en el futuro usamos composer)
+vendor/
+composer.lock
+
+# Node / build
+node_modules/
+dist/
+build/
+.cache/
+
+# Backups o temporales
+*.bak
+*.tmp
+*.swp
