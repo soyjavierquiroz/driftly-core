@@ -79,8 +79,10 @@ class Driftly_Router {
 
         $controller_map = [
             'vds' => [
-                'dashboard' => 'VDS_Dashboard_Controller',
-                'catalogo'  => 'VDS_Catalogo_Controller',
+                'dashboard'      => 'VDS_Dashboard_Controller',
+                'catalogo'       => 'VDS_Catalogo_Controller',
+                'mis-productos'  => 'VDS_Mis_Productos_Controller',
+                'producto'       => 'VDS_Producto_Controller', // 👈 NUEVO (Editor individual)
             ],
         ];
 
