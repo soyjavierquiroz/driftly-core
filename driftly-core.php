@@ -121,17 +121,18 @@ if ( ! function_exists( 'driftly_get_role_name' ) ) {
 // 1. Cargar el controlador base ANTES que los módulos
 require_once DRIFTLY_CORE_PATH . 'controllers/class-driftly-controller.php';
 
-// 2. Activar módulo VDS
-require_once DRIFTLY_CORE_PATH . 'modules/vds/module.php';
+// 2. Cargar module.php de TODOS los módulos automáticamente
+foreach (glob(DRIFTLY_CORE_PATH . 'modules/*/module.php') as $module_file) {
+    require_once $module_file;
+}
 
 // 3. Inicializar módulos muy temprano
-add_action( 'plugins_loaded', function() {
+add_action('plugins_loaded', function() {
     driftly_boot_modules();
-}, 1 );
+}, 1);
 
 // 4. Router principal
 require_once DRIFTLY_CORE_PATH . 'driftly-router.php';
-
 
 /*
 |--------------------------------------------------------------------------

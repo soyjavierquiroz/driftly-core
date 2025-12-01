@@ -82,7 +82,14 @@ class Driftly_Router {
                 'dashboard'      => 'VDS_Dashboard_Controller',
                 'catalogo'       => 'VDS_Catalogo_Controller',
                 'mis-productos'  => 'VDS_Mis_Productos_Controller',
-                'producto'       => 'VDS_Producto_Controller', // 👈 NUEVO (Editor individual)
+                'producto'       => 'VDS_Producto_Controller', // 👈 Editor individual VDS
+            ],
+
+            'proveedor' => [
+                'dashboard'     => 'Proveedor_Dashboard_Controller',
+                'productos'     => 'Proveedor_Productos_Controller',
+                'producto'      => 'Proveedor_Producto_Controller',  // /proveedor/producto/{id}
+                'pedidos'       => 'Proveedor_Pedidos_Controller',
             ],
         ];
 

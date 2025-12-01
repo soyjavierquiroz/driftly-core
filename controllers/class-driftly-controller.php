@@ -4,53 +4,60 @@ if (!defined('ABSPATH')) exit;
 abstract class Driftly_Controller {
 
     /**
-     * Renderiza un template dentro del tema driftly-dashboard.
-     *
-     * Ahora incluye soporte modular:
-     *  - Primero busca en el módulo correspondiente.
-     *  - Luego fallback a /templates/ original.
+     * Render multmódulo:
+     *  - Detecta módulo por prefijo del template (vds-, proveedor-, etc.)
+     *  - Carga correctamente la plantilla desde su módulo
+     *  - Envolver en el header/footer del theme Driftly
+     *  - Evitar desbordamientos o mezclas entre módulos
      */
     protected function render($template, $data = []) {
 
+        // Asegurar que no venga con ".php"
+        $template = str_replace('.php', '', $template);
+
         $template_file = '';
 
-        /**
-         * 1. Intentar cargar desde módulos
-         * Determina qué módulo usar según el prefijo del template:
-         * 'vds-dashboard' → módulo 'vds'
-         */
-        if (strpos($template, 'vds-') === 0) {
+        //--------------------------------------------------------------
+        // 1. Detectar el módulo por prefijo:
+        //    vds-dashboard     => módulo "vds"
+        //    proveedor-product => módulo "proveedor"
+        //--------------------------------------------------------------
+        if (preg_match('/^(vds|proveedor)\-/', $template, $match)) {
 
-            // el template real es: modules/vds/templates/{template}.php
-            $module_template = DRIFTLY_CORE_PATH . 'modules/vds/templates/' . $template . '.php';
+            $slug = $match[1]; // vds o proveedor
+
+            $module_template = DRIFTLY_CORE_PATH . "modules/$slug/templates/$template.php";
 
             if (file_exists($module_template)) {
                 $template_file = $module_template;
             }
         }
 
-        /**
-         * 2. Fallback: template clásico (sitio original)
-         */
-        if (!$template_file) {
-            $fallback = DRIFTLY_CORE_PATH . 'templates/' . $template . '.php';
-
-            if (file_exists($fallback)) {
-                $template_file = $fallback;
-            }
-        }
-
-        // Si llega aquí sin template, error crítico.
+        //--------------------------------------------------------------
+        // 2. Si no existe → error claro
+        //--------------------------------------------------------------
         if (!$template_file || !file_exists($template_file)) {
-            wp_die("Template no encontrado: $template_file");
+            wp_die("Template no encontrado: $template");
         }
 
-        // Pasar datos a la vista
-        extract($data);
+        //--------------------------------------------------------------
+        // 3. Pasar variables a la vista de forma segura
+        //--------------------------------------------------------------
+        if (!empty($data) && is_array($data)) {
+            extract($data, EXTR_SKIP);
+        }
 
-        get_header();
-        include $template_file;
-        get_footer();
+        //--------------------------------------------------------------
+        // 4. Layout global del panel Driftly
+        //--------------------------------------------------------------
+        get_header();  // Header del theme Driftly
+        include $template_file; // La vista del módulo correspondiente
+        get_footer();  // Footer del theme Driftly
+
+        //--------------------------------------------------------------
+        // 5. Muy importante: evitar que WP siga procesando otras plantillas
+        //--------------------------------------------------------------
+        exit;
     }
 
     abstract public function handle($param);
