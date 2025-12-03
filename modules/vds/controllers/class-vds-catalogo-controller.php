@@ -67,7 +67,7 @@ class VDS_Catalogo_Controller extends Driftly_Controller {
             $product_id = $p->ID;
 
             // Datos ACF del producto
-            $precio_mayorista = get_field( 'precio_mayorista', $product_id );
+            $precio_vendedor = get_field( 'precio_vendedor', $product_id );
             $precio_sugerido  = get_field( 'precio_sugerido', $product_id );
             $proveedor_id     = get_field( 'proveedor_id', $product_id );
 
@@ -91,7 +91,7 @@ class VDS_Catalogo_Controller extends Driftly_Controller {
             );
 
             $activo          = $row ? (bool) $row->activo : false;
-            $precio_vds      = $row ? (float) $row->precio_final : (float) $precio_mayorista * 1.10;
+            $precio_vds      = $row ? (float) $row->precio_final : (float) $precio_vendedor * 1.10;
             $descripcion_vds = $row ? $row->descripcion : '';
             $orden           = $row ? intval( $row->orden ) : 0;
 
@@ -101,7 +101,7 @@ class VDS_Catalogo_Controller extends Driftly_Controller {
                 'imagen'           => $thumb,
                 'proveedor_nombre' => $proveedor_nombre,
                 'proveedor_id'     => $proveedor_id,
-                'precio_mayorista' => $precio_mayorista,
+                'precio_vendedor' => $precio_vendedor,
                 'precio_sugerido'  => $precio_sugerido,
                 'precio_vds'       => $precio_vds,
                 'descripcion_vds'  => $descripcion_vds,

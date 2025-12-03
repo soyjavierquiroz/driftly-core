@@ -64,8 +64,8 @@ class Driftly_VDS_Ajax {
 
         } else {
             // Crear registro nuevo (activando el producto)
-            $precio_mayorista = get_field('precio_mayorista', $product_id);
-            $precio_inicial   = floatval($precio_mayorista) * 1.10;
+            $precio_vendedor = get_field('precio_vendedor', $product_id);
+            $precio_inicial   = floatval($precio_vendedor) * 1.10;
 
             $wpdb->insert(
                 $tabla,
@@ -177,7 +177,7 @@ class Driftly_VDS_Ajax {
         $tabla_urls = $wpdb->prefix . 'driftly_vds_urls';
 
         // Datos WooCommerce
-        $precio_mayorista = get_field('precio_mayorista', $product_id);
+        $precio_vendedor = get_field('precio_vendedor', $product_id);
         $precio_sugerido  = get_field('precio_sugerido', $product_id);
         $proveedor_id     = get_field('proveedor_id', $product_id);
 
@@ -205,7 +205,7 @@ class Driftly_VDS_Ajax {
         );
 
         $activo          = $row ? (bool) $row->activo : false;
-        $precio_vds      = $row ? (float) $row->precio_final : (float) $precio_mayorista * 1.10;
+        $precio_vds      = $row ? (float) $row->precio_final : (float) $precio_vendedor * 1.10;
         $descripcion_vds = $row ? $row->descripcion : '';
         $orden           = $row ? intval($row->orden) : 0;
 
@@ -226,7 +226,7 @@ class Driftly_VDS_Ajax {
             'imagen'           => $thumb,
             'proveedor_nombre' => $proveedor_nombre,
 
-            'precio_mayorista' => $precio_mayorista,
+            'precio_vendedor' => $precio_vendedor,
             'precio_sugerido'  => $precio_sugerido,
 
             'descripcion_base' => $descripcion_base,

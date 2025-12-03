@@ -101,9 +101,9 @@
 
                         <div class="d-product-card__prices">
                             <div class="d-product-card__price-row">
-                                <span class="label">Mayorista</span>
+                                <span class="label">Vendedor</span>
                                 <span class="value">
-                                    <?php echo wc_price( $p['precio_mayorista'] ); ?>
+                                    <?php echo wc_price( $p['precio_vendedor'] ); ?>
                                 </span>
                             </div>
                             <div class="d-product-card__price-row">
@@ -222,7 +222,7 @@
                 <div class="d-modal__section">
                     <h4>Precios base</h4>
                     <p class="d-text-muted">
-                        Mayorista: <span id="dpm-mayorista"></span><br>
+                        Vendedor: <span id="dpm-Vendedor"></span><br>
                         Sugerido: <span id="dpm-sugerido"></span>
                     </p>
                 </div>

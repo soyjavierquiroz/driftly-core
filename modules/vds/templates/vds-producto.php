@@ -10,7 +10,7 @@
  * $imagen
  * $descripcion_base
  * $proveedor_nombre
- * $precio_mayorista
+ * $precio_vendedor
  * $precio_sugerido
  * $precio_vds
  * $descripcion_vds
@@ -52,7 +52,7 @@ if (!defined('ABSPATH')) exit;
 
                 <p class="d-text-muted">
                     Proveedor: <strong><?php echo esc_html($proveedor_nombre); ?></strong><br>
-                    Precio mayorista: <strong><?php echo wc_price($precio_mayorista); ?></strong><br>
+                    Precio Vendedor: <strong><?php echo wc_price($precio_vendedor); ?></strong><br>
                     Precio sugerido: <strong><?php echo wc_price($precio_sugerido); ?></strong>
                 </p>
             </section>

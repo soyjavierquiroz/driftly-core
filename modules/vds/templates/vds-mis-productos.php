@@ -45,8 +45,8 @@ if (!defined('ABSPATH')) exit;
                         <div class="d-vds-product__prices">
 
                             <div class="row">
-                                <span>Mayorista</span>
-                                <strong><?php echo wc_price($p['precio_mayorista']); ?></strong>
+                                <span>Vendedor</span>
+                                <strong><?php echo wc_price($p['precio_vendedor']); ?></strong>
                             </div>
 
                             <div class="row">

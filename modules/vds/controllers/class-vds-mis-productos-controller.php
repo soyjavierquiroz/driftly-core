@@ -32,7 +32,7 @@ class VDS_Mis_Productos_Controller extends Driftly_Controller {
             }
 
             // Datos WooCommerce
-            $precio_mayorista = get_field('precio_mayorista', $product_id);
+            $precio_vendedor = get_field('precio_vendedor', $product_id);
             $precio_sugerido  = get_field('precio_sugerido', $product_id);
             $proveedor_id     = get_field('proveedor_id', $product_id);
 
@@ -54,7 +54,7 @@ class VDS_Mis_Productos_Controller extends Driftly_Controller {
                 'imagen'           => $thumb,
                 'proveedor_nombre' => $proveedor_nombre,
 
-                'precio_mayorista' => $precio_mayorista,
+                'precio_vendedor' => $precio_vendedor,
                 'precio_sugerido'  => $precio_sugerido,
 
                 // Datos VDS personalizados

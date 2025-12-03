@@ -10,107 +10,143 @@ class Driftly_Router {
     public function __construct() {
         add_action('init', [ $this, 'add_rewrite_rules' ]);
         add_filter('query_vars', [ $this, 'register_query_vars' ]);
-
-        // IMPORTANTE: reemplaza template_redirect por wp
         add_action('wp', [ $this, 'dispatch_route' ]);
     }
 
-    /**
-     * Crear rutas base:
-     * /vds/*
-     * /proveedor/*
-     * /admin-driftly/*
-     */
     public function add_rewrite_rules() {
 
+        /*
+        |--------------------------------------------------------------------------
+        | VDS
+        |--------------------------------------------------------------------------
+        */
         add_rewrite_rule(
-            '^vds/([^/]+)/?([^/]*)/?',
+            '^vds/([^/]+)/([^/]+)/([^/]+)/?',
+            'index.php?driftly_role=vds&driftly_page=$matches[1]&driftly_param=$matches[2]&driftly_param2=$matches[3]',
+            'top'
+        );
+
+        add_rewrite_rule(
+            '^vds/([^/]+)/([^/]+)/?',
             'index.php?driftly_role=vds&driftly_page=$matches[1]&driftly_param=$matches[2]',
             'top'
         );
 
         add_rewrite_rule(
-            '^proveedor/([^/]+)/?([^/]*)/?',
+            '^vds/([^/]+)/?',
+            'index.php?driftly_role=vds&driftly_page=$matches[1]',
+            'top'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | PROVEEDOR
+        |--------------------------------------------------------------------------
+        */
+        add_rewrite_rule(
+            '^proveedor/([^/]+)/([^/]+)/([^/]+)/?',
+            'index.php?driftly_role=proveedor&driftly_page=$matches[1]&driftly_param=$matches[2]&driftly_param2=$matches[3]',
+            'top'
+        );
+
+        add_rewrite_rule(
+            '^proveedor/([^/]+)/([^/]+)/?',
             'index.php?driftly_role=proveedor&driftly_page=$matches[1]&driftly_param=$matches[2]',
             'top'
         );
 
         add_rewrite_rule(
-            '^admin-driftly/([^/]+)/?([^/]*)/?',
+            '^proveedor/([^/]+)/?',
+            'index.php?driftly_role=proveedor&driftly_page=$matches[1]',
+            'top'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | ADMIN
+        |--------------------------------------------------------------------------
+        */
+        add_rewrite_rule(
+            '^admin-driftly/([^/]+)/([^/]+)/?',
             'index.php?driftly_role=admin&driftly_page=$matches[1]&driftly_param=$matches[2]',
+            'top'
+        );
+
+        add_rewrite_rule(
+            '^admin-driftly/([^/]+)/?',
+            'index.php?driftly_role=admin&driftly_page=$matches[1]',
             'top'
         );
     }
 
-    /**
-     * Query vars personalizadas
-     */
     public function register_query_vars($vars) {
         $vars[] = 'driftly_role';
         $vars[] = 'driftly_page';
         $vars[] = 'driftly_param';
+        $vars[] = 'driftly_param2';
         return $vars;
     }
 
-    /**
-     * Resolver ruta → llamar controlador correspondiente
-     */
     public function dispatch_route() {
 
-        $role  = get_query_var('driftly_role');
-        $page  = get_query_var('driftly_page');
-        $param = get_query_var('driftly_param');
+        $role   = get_query_var('driftly_role');
+        $page   = get_query_var('driftly_page');
+        $param1 = get_query_var('driftly_param');
+        $param2 = get_query_var('driftly_param2');
 
-        // No es una ruta Driftly
-        if (!$role || !$page) {
-            return;
-        }
+        if (!$role || !$page) return;
 
-        // Validar rol del usuario
+        // Validar rol
         $user_role = driftly_get_user_role();
-
         if ($user_role !== $role && $user_role !== 'admin') {
             wp_die('No autorizado.');
         }
 
-        // ----------------------------------------------------------
-        // CONTROLADORES IMPLEMENTADOS
-        // ----------------------------------------------------------
-
+        /*
+        |--------------------------------------------------------------------------
+        | MAPA DE CONTROLADORES
+        |--------------------------------------------------------------------------
+        */
         $controller_map = [
-            'vds' => [
-                'dashboard'      => 'VDS_Dashboard_Controller',
-                'catalogo'       => 'VDS_Catalogo_Controller',
-                'mis-productos'  => 'VDS_Mis_Productos_Controller',
-                'producto'       => 'VDS_Producto_Controller', // 👈 Editor individual VDS
+            'proveedor' => [
+                'dashboard' => 'Proveedor_Dashboard_Controller',
+                'productos' => 'Proveedor_Productos_Controller',
+                'producto'  => 'Proveedor_Producto_Controller',
+                'pedidos'   => 'Proveedor_Pedidos_Controller',
             ],
 
-            'proveedor' => [
-                'dashboard'     => 'Proveedor_Dashboard_Controller',
-                'productos'     => 'Proveedor_Productos_Controller',
-                'producto'      => 'Proveedor_Producto_Controller',  // /proveedor/producto/{id}
-                'pedidos'       => 'Proveedor_Pedidos_Controller',
+            'vds' => [
+                'dashboard'     => 'VDS_Dashboard_Controller',
+                'catalogo'      => 'VDS_Catalogo_Controller',
+                'mis-productos' => 'VDS_Mis_Productos_Controller',
+                'producto'      => 'VDS_Producto_Controller',
             ],
         ];
 
-        if (!isset($controller_map[$role])) {
-            wp_die('Ruta no implementada.');
-        }
-
         if (!isset($controller_map[$role][$page])) {
-            wp_die('Página no implementada para este rol.');
+            wp_die('Página no implementada.');
         }
 
-        $class_name = $controller_map[$role][$page];
-
-        if (!class_exists($class_name)) {
-            wp_die('Controlador no disponible: ' . $class_name);
+        $class = $controller_map[$role][$page];
+        if (!class_exists($class)) {
+            wp_die('Controlador no disponible.');
         }
 
-        $controller = new $class_name();
+        $controller = new $class();
 
-        // Ejecutar controlador y detener WordPress
-        $controller->handle($param);
+        /*
+        |--------------------------------------------------------------------------
+        | Pasar parámetros correctamente
+        | Ej: /proveedor/producto/61  → $param1 = 61
+        |     /proveedor/producto/61/desactivar → array(61, "desactivar")
+        |--------------------------------------------------------------------------
+        */
+        if ($param1 && $param2) {
+            $controller->handle([ $param1, $param2 ]);
+        } else {
+            $controller->handle($param1);
+        }
+
         exit;
     }
 }
