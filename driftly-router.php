@@ -120,6 +120,7 @@ class Driftly_Router {
                 'catalogo'      => 'VDS_Catalogo_Controller',
                 'mis-productos' => 'VDS_Mis_Productos_Controller',
                 'producto'      => 'VDS_Producto_Controller',
+                'configuracion' => 'VDS_Configuracion_Controller', // 👈 NUEVO
             ],
         ];
 
@@ -137,8 +138,6 @@ class Driftly_Router {
         /*
         |--------------------------------------------------------------------------
         | Pasar parámetros correctamente
-        | Ej: /proveedor/producto/61  → $param1 = 61
-        |     /proveedor/producto/61/desactivar → array(61, "desactivar")
         |--------------------------------------------------------------------------
         */
         if ($param1 && $param2) {
