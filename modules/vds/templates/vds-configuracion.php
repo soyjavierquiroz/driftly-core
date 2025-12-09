@@ -68,11 +68,27 @@ $is_pro = ( is_string($tipo_vds ?? '') && strtolower($tipo_vds) === 'pro' ) || c
                     <p class="vds-muted">* El uploader se agregará más adelante.</p>
                 </div>
 
-                <div class="vds-field">
+                <!-- COLOR PICKER NUEVO -->
+                <div class="vds-field vds-colorpicker">
                     <label for="color_primario">Color primario</label>
-                    <input type="color" id="color_primario" name="color_primario"
-                           value="<?php echo esc_attr($color ?: '#ff6600'); ?>">
+
+                    <div class="vds-colorpicker__wrap">
+                        <input type="color"
+                            id="color_primario"
+                            name="color_primario"
+                            class="vds-colorpicker__input"
+                            value="<?php echo esc_attr($color ?: '#ff6600'); ?>">
+
+                        <input type="text"
+                            id="color_primario_hex"
+                            class="vds-colorpicker__hex"
+                            maxlength="7"
+                            value="<?php echo esc_attr($color ?: '#ff6600'); ?>">
+                    </div>
+
+                    <p class="vds-muted">Elige el color principal de tu tienda.</p>
                 </div>
+
             </section>
 
             <!-- TAB: DOMINIO -->
@@ -190,6 +206,25 @@ if (!DriftlyDashboard.ajaxUrl)
         });
     });
 
+    // COLOR PICKER → sincronización
+    const inputColor = document.getElementById("color_primario");
+    const inputHex   = document.getElementById("color_primario_hex");
+
+    function normalizeHex(v) {
+        v = v.trim();
+        if (!v.startsWith("#")) v = "#" + v;
+        return /^#[0-9A-Fa-f]{6}$/.test(v) ? v : null;
+    }
+
+    inputColor.addEventListener("input", e => {
+        inputHex.value = e.target.value;
+    });
+
+    inputHex.addEventListener("input", e => {
+        const n = normalizeHex(e.target.value);
+        if (n) inputColor.value = n;
+    });
+
     // Guardar datos
     const form = document.getElementById('vds-config-form');
     const saveBtn = document.getElementById('vds-config-save');
@@ -291,6 +326,26 @@ if (!DriftlyDashboard.ajaxUrl)
     font-size: 0.9rem;
 }
 
+/* COLOR PICKER */
+.vds-colorpicker__wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.vds-colorpicker__input {
+    width: 48px;
+    height: 38px;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+}
+
+.vds-colorpicker__hex {
+    flex: 1;
+}
+
 .vds-logo-box {
     width: 180px;
     height: 130px;
@@ -329,11 +384,6 @@ if (!DriftlyDashboard.ajaxUrl)
     display: flex;
     align-items: center;
     gap: 14px;
-}
-
-.vds-status {
-    font-size: 13px;
-    color: #6b7280;
 }
 
 /* Responsive */

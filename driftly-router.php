@@ -120,7 +120,8 @@ class Driftly_Router {
                 'catalogo'      => 'VDS_Catalogo_Controller',
                 'mis-productos' => 'VDS_Mis_Productos_Controller',
                 'producto'      => 'VDS_Producto_Controller',
-                'configuracion' => 'VDS_Configuracion_Controller', // 👈 NUEVO
+                'configuracion' => 'VDS_Configuracion_Controller',
+                'perfil'        => 'VDS_Perfil_Controller', // 👈 PERFIL PERSONAL
             ],
         ];
 

@@ -27,7 +27,8 @@ driftly_register_module_files( 'vds', 'controllers', [
 	'controllers/class-vds-catalogo-controller.php',
 	'controllers/class-vds-mis-productos-controller.php',
 	'controllers/class-vds-producto-controller.php',
-	'controllers/class-vds-configuracion-controller.php', // 👈 NUEVO
+	'controllers/class-vds-configuracion-controller.php', // Configuración tienda
+	'controllers/class-vds-perfil-controller.php',        // 👈 NUEVO — PERFIL DEL VDS
 ]);
 
 // AJAX VDS
